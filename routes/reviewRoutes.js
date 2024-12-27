@@ -42,4 +42,48 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Get all reviews for a specific attraction
+router.get('/attraction/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Get all reviews for the given attraction
+    const reviews = await Review.find({ attraction: id }).populate('visitor', 'name email');
+    if (!reviews || reviews.length === 0) {
+      return res.status(404).json({ error: 'No reviews found for this attraction' });
+    }
+
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get all reviews by a specific visitor
+router.get('/visitor/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Get all reviews by the given visitor
+    const reviews = await Review.find({ visitor: id }).populate('attraction', 'name location');
+    if (!reviews || reviews.length === 0) {
+      return res.status(404).json({ error: 'No reviews found for this visitor' });
+    }
+
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get all reviews
+router.get('/', async (req, res) => {
+  try {
+    const reviews = await Review.find().populate('visitor', 'name email').populate('attraction', 'name location');
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

@@ -28,6 +28,16 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Get all visitors
+router.get('/', async (req, res) => {
+  try {
+    const visitors = await Visitor.find();  // Retrieve all visitors from the database
+    res.status(200).json(visitors);  // Return the list of visitors
+  } catch (error) {
+    res.status(500).json({ error: error.message });  // Handle any errors
+  }
+});
+
 // Get visitor activity (review count)
 router.get('/activity', async (req, res) => {
   try {
